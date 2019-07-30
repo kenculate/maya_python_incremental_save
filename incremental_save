@@ -1,0 +1,20 @@
+import maya.cmds as cmds
+
+def incremental_save(path):
+    scene_path = path
+    path, file = os.path.split(scene_path)
+    file = file.split('.')
+    file_name = file[0].split('_0')
+    version = 1
+    if len(file_name) > 1:
+        version = int(file_name[-1]) + 1
+    name = os.path.join(path, '{}_{}.{}'.format(file_name[0], str(version).rjust(4, '0'), file[-1]))
+    while os.path.exists(name):
+        version += 1
+        name = os.path.join(path, '{}_{}.{}'.format(file_name[0], str(version).rjust(4, '0'), file[-1]))
+    name = os.path.join(path, '{}_{}.{}'.format(file_name[0], str(version).rjust(4, '0'), file[-1]))
+    return name
+
+path = cmds.file(q=True, sceneName=True)
+cmds.file(rename=incremental_save(path))
+cmds.file(save=True)
